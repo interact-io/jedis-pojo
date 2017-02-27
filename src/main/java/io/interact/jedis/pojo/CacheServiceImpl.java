@@ -154,6 +154,22 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public void bulkInsert(Map<String, Object> inserts, Integer ttl) {
+        try (Jedis jedis = pool.getResource()) {
+            Pipeline pipeline = jedis.pipelined();
+            inserts.entrySet().forEach(entry -> {
+                pipeline.set(entry.getKey(), serialize(entry.getValue()));
+                if (ttl != null) {
+                    pipeline.expire(entry.getKey(), ttl);
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
     public void bulkSetInsertAndDelete(Map<String, Set<Object>> deletes, Map<String, Set<Object>> inserts) {
         try (Jedis jedis = pool.getResource()) {
             Pipeline pipeline = jedis.pipelined();

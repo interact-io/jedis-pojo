@@ -103,7 +103,19 @@ public interface CacheService {
     void evict(String... keys);
 
     /**
-     * Execute batch delete and update operations on redis sets.
+     * Set key value pairs in cache with ttl in one redis operation.
+     * 
+     * @param inserts
+     *            the keys and values to cache
+     * @param ttl
+     *            Set the cached TTL to the supplied value or don't set the TTL
+     *            when the supplied value is null.
+     */
+    void bulkInsert(Map<String, Object> inserts, Integer ttl);
+
+    /**
+     * Execute batch delete and update operations on redis sets in one
+     * operation.
      * 
      * @param deletes
      *            deletes operations : the keys of the map are the redis keys
